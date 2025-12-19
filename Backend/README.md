@@ -62,3 +62,59 @@ Returns a JSON object containing the JWT token and the user record (excluding th
 - The login handler selects the user's `password` field explicitly when querying the database to verify credentials.
 - On successful authentication the user model's `generateAuthToken` is used to produce the JWT; ensure `process.env.JWT_SECRET` is set.
 - The route is defined as `POST /user/login` in `routes/user.routes.js` and expects body fields `email` and `password`.
+# User endpoints: profile & logout
+
+## `/user/profile` Endpoint
+
+### Description
+
+Returns the authenticated user's profile information. The route is protected by authentication middleware and requires a valid JWT (sent either in the `Authorization` header as `Bearer <token>` or in the `token` cookie).
+
+### HTTP Method
+
+  `GET`
+
+### Authorization
+
+- Requires authentication. The middleware used is `authMiddleware.authUser` in `routes/user.routes.js`.
+
+### Success Response (200)
+
+Returns the user object for the authenticated user (id, fullname, email, etc.). Example:
+
+- `200` — { user }
+
+### Error Responses
+
+- `401` — Unauthorized (missing/invalid/expired token).
+
+### Notes
+
+- The handler is implemented in `controllers/user.controller.js` as `getUserProfile` and simply returns `req.user` (populated by the auth middleware).
+
+## `/user/logout` Endpoint
+
+### Description
+
+Logs out the authenticated user by blacklisting the current token and clearing the `token` cookie.
+
+### HTTP Method
+
+  `GET`
+
+### Authorization
+
+- Requires authentication. The route uses `authMiddleware.authUser` to ensure a valid token.
+
+### Success Response (200)
+
+- `200` — { message: "Logged out successfully" }
+
+### Error Responses
+
+- `400` — Token not found (no token provided in cookie or Authorization header).
+- `500` — Server error (on unexpected failures while blacklisting the token).
+
+### Notes
+
+- The route is implemented in `controllers/user.controller.js` as `LogoutUser`. It finds the token from the `token` cookie or the `Authorization` header, saves it to the `BlacklistToken` collection via `models/BlacklistToken.model.js`, and clears the cookie with `res.clearCookie("token")`.
