@@ -62,7 +62,7 @@ Returns a JSON object containing the JWT token and the user record (excluding th
 - The login handler selects the user's `password` field explicitly when querying the database to verify credentials.
 - On successful authentication the user model's `generateAuthToken` is used to produce the JWT; ensure `process.env.JWT_SECRET` is set.
 - The route is defined as `POST /user/login` in `routes/user.routes.js` and expects body fields `email` and `password`.
-# User endpoints: profile & logout
+
 
 ## `/user/profile` Endpoint
 
