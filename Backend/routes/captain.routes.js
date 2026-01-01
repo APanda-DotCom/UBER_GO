@@ -34,7 +34,7 @@ router.post(
       .isIn(['car', 'motorcycle', 'auto'])
       .withMessage('Invalid vehicle type'),
   ],
-  captainController.registerCaptain
+  captainController.registerCaptian
 );
 
 module.exports = router;
