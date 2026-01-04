@@ -21,7 +21,7 @@ const captainSchema = new mongoose.Schema({
         lowercase: true,
         match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'please enter a valid email'],
     },
-    password: {                // ✅ FIXED spelling
+    password: {                
         type: String,
         required: true,
         select: false,
@@ -32,7 +32,7 @@ const captainSchema = new mongoose.Schema({
         enum: ['active', 'inactive'],
         default: 'active',
     },
-    vehicle: {                 // ✅ FIXED nesting
+    vehicle: {                
         color: {
             type: String,
             required: true,
@@ -74,7 +74,7 @@ captainSchema.methods.comparePassword = async function (password) {
     return bcrypt.compare(password, this.password);
 };
 
-captainSchema.statics.hashPassword = async function (password) {   // ✅ FIXED
+captainSchema.statics.hashPassword = async function (password) {   
     return bcrypt.hash(password, 10);
 };
 

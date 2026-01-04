@@ -4,7 +4,8 @@ const { validationResult } = require('express-validator');
 const BlacklistTokenModel=require('../models/BlacklistToken.model');
 const captainModel=require('../models/captain.model');
 
-module.exports.registerUser = async (req, res) => {
+
+module.exports.registerUser = async (req, res,next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -22,7 +23,7 @@ if(isUserAlready){
       firstname: fullname.firstname,
       lastname: fullname.lastname,
       email,
-      password, // send RAW password, service will hash
+      password, 
     });
 
     const token = user.generateAuthToken();
@@ -86,14 +87,14 @@ module.exports.getUserProfile = async(req,res)=>{
   res.status(200).json(req.user);
 };
 
-module.exports.LogoutUser = async (req, res) => {
+module.exports.logoutUser = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
 
     const token =
       req.cookies?.token ||
       (authHeader && authHeader.startsWith("Bearer ")
-        ? authHeader.split(" ")[1]
+        ? authHeader.split(' ')[1]
         : null);
 
     if (!token) {

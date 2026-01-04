@@ -40,6 +40,6 @@ router.get(
 router.get(
   '/logout',
   authUser,
-  userController.LogoutUser
+  userController.logoutUser
 );
 module.exports =router;
