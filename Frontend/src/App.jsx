@@ -17,7 +17,7 @@ function App() {
         </a>
       </div>
       <h1 calssName="text-3xl font-bold underline,text-rose-600">Vite + React</h1>
-      <p className="text-3xl font-bold underline text-lg text-rose-500">Hello Tailwind CSS!</p>
+      <p className="text-3xl font-bold underline text-lg text-rose-700">Hello Tailwind CSS!</p>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
