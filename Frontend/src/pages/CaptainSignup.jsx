@@ -1,9 +1,146 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import UberLogo from '../assets/uber-driver-svgrepo-com.svg'
+
 
 const CaptainSignup = () => {
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [/*captainData*/, setCaptainData] = useState({})
+
+  const handlerSubmit = (e) => {
+    e.preventDefault()
+
+    setCaptainData({
+      fullName: {
+        firstName,
+        lastName,
+      },
+      email,
+      password,
+    })
+
+    setEmail('')
+    setPassword('')
+    setFirstName('')
+    setLastName('')
+  }
+
   return (
-    <div>
-      <h1>CaptainSignup</h1>
+    <div className="min-h-screen bg-white flex flex-col justify-between">
+      
+      
+      <div className="px-7 pt-8">
+        <img src={UberLogo} alt="Uber Logo" className="w-20 mb-5" />
+
+        <form onSubmit={handlerSubmit} className="space-y-6">
+
+    
+          <div>
+            <h3 className="text-sm font-medium mb-2 text-gray-800">
+              What’s our Captain's name
+            </h3>
+            <div className="flex gap-3">
+              <input
+                required
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="First name"
+                className="bg-gray-100 rounded-lg px-4 py-3 w-1/2 text-sm
+                           focus:outline-none focus:ring-2 focus:ring-black"
+              />
+              <input
+                required
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last name"
+                className="bg-gray-100 rounded-lg px-4 py-3 w-1/2 text-sm
+                           focus:outline-none focus:ring-2 focus:ring-black"
+              />
+            </div>
+          </div>
+
+       
+          <div>
+            <h3 className="text-sm font-medium mb-2 text-gray-800">
+              What’s our Captain's email
+            </h3>
+            <input
+              required
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="email@example.com"
+              className="bg-gray-100 rounded-lg px-4 py-3 w-full text-sm
+                         focus:outline-none focus:ring-2 focus:ring-black"
+            />
+          </div>
+
+      
+          <div>
+            <h3 className="text-sm font-medium mb-2 text-gray-800">
+              Create a password
+            </h3>
+            <div className="relative">
+              <input
+                required
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className="bg-gray-100 rounded-lg px-4 py-3 pr-14 w-full text-sm
+                           focus:outline-none focus:ring-2 focus:ring-black"
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer
+                           text-gray-500 hover:text-black p-1 rounded-full"
+              >
+                {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+              </span>
+            </div>
+          </div>
+
+       
+          <button
+            className="w-full bg-black text-white py-3 rounded-lg
+                       font-semibold text-base hover:bg-gray-900 transition"
+          >
+            Create account
+          </button>
+        </form>
+
+    
+        <p className="text-center text-sm text-gray-600 mt-6">
+          Already have an account?{' '}
+          <Link
+            to="/Captain-login"
+            className="text-blue-600 font-medium hover:underline"
+          >
+            Login here
+          </Link>
+        </p>
+      </div>
+
+     
+      <p className="text-[9px] text-gray-500 leading-snug text-center px-6 pb-6">
+        By continuing, you agree that Uber or its representatives may contact you by
+        email, phone, or SMS (including automated means). You also agree to Uber’s
+        <span className="text-blue-600 hover:underline cursor-pointer ml-1">
+          Terms of Service
+        </span>{' '}
+        and
+        <span className="text-blue-600 hover:underline cursor-pointer ml-1">
+          Privacy Policy
+        </span>.
+      </p>
     </div>
   )
 }

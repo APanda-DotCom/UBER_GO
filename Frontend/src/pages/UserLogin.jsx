@@ -7,17 +7,18 @@ const UserLogin = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [userData, setUserData] = useState({})
+  const [/*userData,*/ setUserData] = useState({})
 
   const handlerSubmit = (e) => {
     e.preventDefault()
-
-    const data = { email, password }
-    setUserData(data)
-    console.log(userData)
-
+     setUserData({
+      Email:email,
+      Password:password
+    })
     setEmail('')
     setPassword('')
+
+    
   }
 
   return (
@@ -25,14 +26,17 @@ const UserLogin = () => {
       
       <div>
         <img
-          className="w-16 mb-12"
+          className="w-20 mb-10"
           src={UberLogo}
           alt="Uber Logo"
         />
 
-        <form onSubmit={handlerSubmit}>
+        <form onSubmit={(e)=>
+         handlerSubmit(e)
+         }
+        >
         
-          <h3 className="text-lg font-semibold mb-2">
+          <h3 className="text-lg font-medium mb-2">
             What's your email
           </h3>
 
@@ -47,7 +51,7 @@ const UserLogin = () => {
           />
 
         
-          <h3 className="text-lg font-semibold mb-2">
+          <h3 className="text-lg font-medium mb-2">
             Enter Password
           </h3>
 
