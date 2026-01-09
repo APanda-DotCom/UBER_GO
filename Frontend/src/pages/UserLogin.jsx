@@ -1,24 +1,46 @@
-import React, { useState } from 'react'
+/* eslint-disable no-unused-vars */
+import React, { useState,useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import UberLogo from '../assets/uber-seeklogo.svg'
+import {UserDataContext} from '../context/UserContext'
+import axios from 'axios'
+import {useNavigate} from 'react-router-dom'
 
 const UserLogin = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [/*userData,*/ setUserData] = useState({})
+  //const [userData, setUserData] = useState({})
 
-  const handlerSubmit = (e) => {
+  const{user,setUser}=useContext(UserDataContext)
+
+  const navigate=useNavigate()
+
+  const handlerSubmit =async (e) => {
     e.preventDefault()
-     setUserData({
-      Email:email,
-      Password:password
-    })
+
+    const userData={
+      email:email,
+      password:password
+    }
+
+    try {
+  const response = await axios.post(
+    `${import.meta.env.VITE_BASE_URL}/users/login`,
+    userData
+  );
+
+  setUser(response.data.user);
+  localStorage.setItem('userToken', response.data.token);
+  navigate('/home');
+} catch (error) {
+  console.log(error.response?.data);
+  alert(error.response?.data?.message || "Login failed");
+}
+
     setEmail('')
     setPassword('')
-
-    
   }
 
   return (

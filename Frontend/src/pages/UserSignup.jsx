@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link ,useNavigate} from 'react-router-dom'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import UberLogo from '../assets/uber-seeklogo.svg'
+import axios from 'axios'
+import { useContext } from "react";
+import {UserDataContext} from '../context/UserContext'
 
 const UserSignup = () => {
   const [email, setEmail] = useState('')
@@ -9,25 +12,45 @@ const UserSignup = () => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [/*userData*/, setUserData] = useState({})
+  //const [userData, setUserData] = useState({})
 
-  const handlerSubmit = (e) => {
+  
+  // eslint-disable-next-line no-unused-vars
+  const{user,setUser}=useContext(UserDataContext)
+
+  const navigate=useNavigate()
+
+  const handlerSubmit =async (e) => {
     e.preventDefault()
 
-    setUserData({
-      fullName :{
-        firstName,
-        lastName,
+  const newUser={
+      fullname :{
+       firstname: firstName,
+        lastname: lastName
       },
       email,
       password,
-    })
+    }
+
+    const response = await axios.post(
+  `${import.meta.env.VITE_BASE_URL}/users/register`,newUser
+);
+
+if (response.status === 201) {
+  const data = response.data;
+  localStorage.setItem('userToken', data.token);
+  setUser(data.user);
+  navigate('/home');
+}
+
 
     setEmail('')
     setPassword('')
     setFirstName('')
     setLastName('')
   }
+
+
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-between">

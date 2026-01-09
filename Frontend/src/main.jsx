@@ -10,7 +10,7 @@ createRoot(document.getElementById('root')).render(
 
     <UserContext>
       <BrowserRouter>
-      <App />
+      <App/>
     </BrowserRouter>
     </UserContext>
   </StrictMode>,
