@@ -17,6 +17,7 @@ const LocationPanel = (props) => {
 
          return <div   key={index} onClick={() =>{
           props.setVehiclepanel(true)
+          props.setPanelOpen(false)
           }}className="flex items-start gap-4 p-2 rounded-2xl border border-gray-200 hover:border-black transition-all duration-300 bg-white shadow-sm hover:shadow-md cursor-pointer my-3 ml-4 mr-4">
   
         <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-100 text-black"><MdOutlineLocationOn size={20} /> </div>
