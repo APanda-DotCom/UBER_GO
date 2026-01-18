@@ -11,7 +11,7 @@ import { GiCash } from "react-icons/gi";
 
 const LookingForDriver = (props) => {
   return (
-    <div>
+    <div className="mb-5 ">
       <h5 
         onClick={() => {
           props.setLookingDriver(false)
@@ -24,7 +24,7 @@ const LookingForDriver = (props) => {
       <h3 className="text-2xl font-semibold mb-4 mt-5">Looking For a Driver</h3>
 
       <div className="flex justify-between flex-col items-center">
-        <img className='h-20 mb-2' src={UberCar} alt="uber-car-logo" />
+        <img className='h-28 mb-2' src={UberCar} alt="uber-car-logo" />
         
         <div className='w-full'>
           <div className='flex items-center gap-4 p-3 mb-2 border-b-2 border-gray-200'>

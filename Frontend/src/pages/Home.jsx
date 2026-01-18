@@ -157,7 +157,7 @@ const Home = () => {
           <div ref={LookingDriverRef} className="fixed w-full z-10 bottom-0 translate-y-full  bg-white px-3 py-8">
             <LookingForDriver  setLookingDriver={setLookingDriver}/>
           </div>
-          <div ref={WaitingDriverRef}className="fixed w-full z-10 bottom-0 translate-y-full  bg-white px-3 py-8">
+          <div ref={WaitingDriverRef}className="fixed w-full z-10 bottom-0 translate-y-full  bg-white px-3 py-8"> 
             <WaitingForDriver setWaitingDriver={setWaitingDriver} />
           </div>
       </div>

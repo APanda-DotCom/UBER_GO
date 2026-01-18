@@ -21,7 +21,7 @@ const ConfirmedVehicle = (props) => {
         <FiChevronDown />
       </h5>
 
-      <h3 className="text-2xl font-semibold mb-3 mt-4">Confirm your Ride</h3>
+      <h3 className="text-2xl font-semibold mb-6 mt-3">Confirm your Ride</h3>
 
       <div className="flex justify-between flex-col items-center">
         <img className='h-28' src={UberCar} alt="uber-car-logo" />
@@ -57,7 +57,7 @@ const ConfirmedVehicle = (props) => {
         onClick={() => {
           props.setLookingDriver(true)
         }}
-        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg mt-3 transition-all duration-200 active:scale-95"
+        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg mt-5 transition-all duration-200 active:scale-95"
       >
         Confirm
       </button>
