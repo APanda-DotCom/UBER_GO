@@ -110,7 +110,7 @@ const Home = () => {
       />
       <div onClick={()=>{
         setVehiclepanel(false)
-      }}className='h-screen w-screen'>
+      }}className="h-4/5">
         <img className="h-full w-full object-cover"
           src={LocationGif}
           alt="location" 
