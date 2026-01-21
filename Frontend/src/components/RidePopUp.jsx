@@ -1,6 +1,6 @@
 import React from 'react'
 import { GiCash } from "react-icons/gi";
-import { FiChevronDown } from "react-icons/fi";
+import { RiArrowDownWideFill } from "react-icons/ri";
 import { MdOutlineLocationOn } from "react-icons/md";
 import { RiUserLocationLine } from "react-icons/ri";
 import Riderimage from "../assets/images.jpg"
@@ -16,7 +16,7 @@ const RidePopUp = (props) => {
            }}
            className="absolute top-3 left-1/2 -translate-x-1/2 text-3xl text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"
          >
-           <FiChevronDown />
+           <RiArrowDownWideFill />
          </h5>
    
          <h3 className="text-2xl font-semibold mb-6 mt-3">New Ride Available..!!</h3>

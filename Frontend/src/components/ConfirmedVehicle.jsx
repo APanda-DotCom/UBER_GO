@@ -1,5 +1,5 @@
 import React from 'react'
-import { FiChevronDown } from "react-icons/fi";
+import { RiArrowDownWideFill } from "react-icons/ri";
 import UberXL from '../assets/UberXL_Black_v2.png';
 import UberMotorCycle from '../assets/motorcycle.png';
 import UberCar from '../assets/car.png';
@@ -18,7 +18,7 @@ const ConfirmedVehicle = (props) => {
         }}
         className="absolute top-3 left-1/2 -translate-x-1/2 text-3xl text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"
       >
-        <FiChevronDown />
+        < RiArrowDownWideFill />
       </h5>
 
       <h3 className="text-2xl font-semibold mb-6 mt-3">Confirm your Ride</h3>

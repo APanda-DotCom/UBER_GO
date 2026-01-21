@@ -3,9 +3,30 @@ import LocationGif from '../assets/Location.gif'
 import Logo from "../assets/uber-driver-svgrepo-com.svg"
 import { Link } from 'react-router-dom'
 import { IoLogOutOutline } from "react-icons/io5";
-import { FiChevronDown } from "react-icons/fi";
+import { RiArrowUpWideLine } from "react-icons/ri";
+import  { useState, useRef } from 'react'
+import gsap from "gsap";
+import {useGSAP} from '@gsap/react';
+import FinishRide from "../components/FinishRide"
 
 const CaptainRiding = () => {
+  
+
+  const[finishRidePanel,setFinishRidePanel]=useState(false);
+   const finishRidePanelRef=useRef(null);
+
+    
+  useGSAP(function(){
+    if(finishRidePanel){
+      gsap.to(finishRidePanelRef.current,{
+           transform:'translatey(0)'
+     }) 
+    }else{
+     gsap.to(finishRidePanelRef.current,{
+          transform:'translatey(100%)'
+     })
+    }
+  } ,[finishRidePanel])
   return (
      <div className="h-screen relative bg-white">
 
@@ -39,16 +60,19 @@ const CaptainRiding = () => {
       alt="Uber Logo"
     />
   </div>
-  <div className="relative h-[20vh] p-6 flex items-center justify-between bg-yellow-400">
-
+  <div className="relative h-[20vh] p-6 flex items-center justify-between  bg-yellow-400"
+   onClick={()=>{
+        setFinishRidePanel(true)
+      }}>
+      
   {/* Center Down Arrow */}
   <h5
     onClick={() => {}}
-    className="absolute top-2 left-1/2 -translate-x-1/2
+    className="absolute mb-1 top-2 left-1/2 -translate-x-1/2
                text-3xl text-gray-900 cursor-pointer
                hover:text-gray-600 transition-colors z-10"
   >
-    <FiChevronDown />
+    < RiArrowUpWideLine />
   </h5>
 
   {/* Distance */}
@@ -65,11 +89,12 @@ const CaptainRiding = () => {
 
 </div>
 
-
-       
+<div ref={finishRidePanelRef}className="fixed w-full z-10 bottom-0 translate-y-full  bg-white px-3 py-8"> 
+            <FinishRide setFinishRidePanel={setFinishRidePanel} />
+       </div> 
 
     </div>
   )
 }
-
+ gsap.registerPlugin(useGSAP);
 export default CaptainRiding

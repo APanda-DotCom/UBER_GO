@@ -8,7 +8,7 @@ import React, { useState, useRef } from 'react'
 import gsap from "gsap";
 import {useGSAP} from '@gsap/react';
 import ConfirmRidePopUp from "../components/ConfirmRidePopUp";
-import { FiChevronDown } from "react-icons/fi";
+
 
 
 const CaptainHome = () => {
@@ -50,19 +50,25 @@ const[ridePopUpPanel,setRidePopUpPanel]= useState(true)
     <div className="h-screen relative bg-white">
 
   {/* Logout Button */}
-  <Link
-    to="/home"
-    className="fixed right-4 top-4 h-12 w-12 
-               flex items-center justify-center 
-               rounded-full bg-white text-black 
-               shadow-lg shadow-black/30
-               transition-all duration-300
-               hover:scale-110 hover:bg-slate-700
-               hover:text-white
-               active:scale-95 z-50"
-  >
-    <IoLogOutOutline className="text-xl" />
-  </Link>
+ <Link
+  to="/home"
+  className="fixed right-4 top-4 h-12 w-12 
+             flex items-center justify-center 
+             rounded-full bg-white text-black 
+             shadow-lg shadow-black/30
+             transition-all duration-300
+             hover:scale-110 hover:bg-slate-700
+             hover:text-white
+             active:scale-95
+             z-10"
+>
+  <IoLogOutOutline className="text-xl" />
+</Link>
+
+
+
+
+
 
   {/* Top Image Section */}
   <div className="h-3/5 relative">
