@@ -1,15 +1,14 @@
-const mongoose=require('mongoose')
-const {validationResult} = required ('exprerss-validator');
+const mongoose = require('mongoose');
 
-const rideSchema=new mongoose.Schema({
-    user:{
-        type:mongoose.schema.Types.objectId,
-        ref:'user',
-        required:true
+const rideSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+        required: true
     },
-    captain:{
-        type:mongoose.schema.Types.objctId,
-        ref:'captain',
+    captain: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'captain',
 
     },
     pickup:{

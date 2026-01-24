@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+const router = express.Router();   
 const { body } = require('express-validator');
 const rideController = require('../controllers/ride.controller');
 
@@ -8,24 +8,24 @@ router.post(
   body('userId')
     .isString()
     .isLength({ min: 24, max: 24 })
-    .withMessage('Invalid user id'),
+    .withMessage('invalid user id'),
 
   body('pickup')
     .isString()
     .isLength({ min: 3 })
-    .withMessage('Invalid pickup address'),
+    .withMessage('invalid pickup address'),
 
   body('destination')
     .isString()
     .isLength({ min: 3 })
-    .withMessage('Invalid destination address'),
+    .withMessage('invalid destination address'),
 
   body('vehicleType')
     .isString()
     .isIn(['auto', 'car', 'motorcycle'])
-    .withMessage('Invalid vehicle type'),
+    .withMessage('invalid vehicle type'),
 
-  rideController.createRide
+  rideController.createRide   
 );
 
 module.exports = router;
