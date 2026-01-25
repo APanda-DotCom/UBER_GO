@@ -29,18 +29,18 @@ async function getFare(pickup, destination) {
   return {
     auto:
       baseFare.auto +
-      distanceTime.distance * perKmRate.auto +
-      distanceTime.time * perMinuteRate.auto,
+      ((distanceTime.distance.value / 1000 * perKmRate.auto )+
+      distanceTime.duration.value /60 * perMinuteRate.auto),
 
     car:
       baseFare.car +
-      distanceTime.distance * perKmRate.car +
-      distanceTime.time * perMinuteRate.car,
+      distanceTime.distance.value / 100 * perKmRate.car +
+      distanceTime.duration.value /60 * perMinuteRate.car,
 
     motorcycle:
       baseFare.motorcycle +
-      distanceTime.distance * perKmRate.motorcycle +
-      distanceTime.time * perMinuteRate.motorcycle
+      distanceTime.distance.value / 1000 * perKmRate.motorcycle +
+      distanceTime.duration.value /60 * perMinuteRate.motorcycle
   };
 }
 
