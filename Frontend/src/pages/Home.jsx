@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useContext ,useEffect} from 'react'
 import Logo from '../assets/uber-seeklogo.svg'
 import LocationGif from '../assets/Location.gif'
 import gsap from "gsap";
@@ -11,7 +11,8 @@ import ConfirmedVehicle from '../components/ConfirmedVehicle';
 import LookingForDriver from '../components/LookingForDriver';
 import WaitingForDriver from '../components/WaitingForDriver';
 import axios from 'axios';
-
+import { SocketContext } from '../context/socketContext';
+import { UserDataContext } from '../context/UserContext';
 
 const Home = () => {
   const [pickup, setPickup] = useState('')
@@ -31,8 +32,18 @@ const Home = () => {
   const [LookingDriver,setLookingDriver]=useState(false)
   const [WaitingDriver,setWaitingDriver]=useState(false)
   const [fare,setFare]=useState({})
-
   const [vehicleType,setVehicleType]= useState(null) 
+
+// eslint-disable-next-line no-unused-vars
+const {socket}=useContext(SocketContext);
+
+const {user}=useContext(UserDataContext);
+
+useEffect(() => {
+  if (!socket || !user || !user._id) return;
+  socket.emit('join', { userType: 'user', userId: user._id });
+}, [socket, user])
+
 
 const handelPickupChange = async(e) => {
     setPickup(e.target.value)
@@ -183,16 +194,22 @@ const handelDestinationChange = async(e) => {
 
 
   async function  createRide(){
-    axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create`,{
-      pickup,
-      destination,
-      vehicleType
-    },{
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    })
-     console.log("ride created successfully")
+    try{
+      const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create`,{
+        pickup,
+        destination,
+        vehicleType
+      },{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      console.log("ride created successfully", res.data)
+      // notify server via websocket
+      if (socket) socket.emit('new-ride', { ride: res.data, userId: user?._id })
+    }catch(err){
+      console.log('Error creating ride:', err.response?.data || err.message)
+    }
   }
 
   return (
