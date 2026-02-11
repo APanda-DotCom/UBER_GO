@@ -1,15 +1,15 @@
-# UBER GO - Full Stack Ride-Sharing Application
+# Real-Time Ride-Booking Management System - Full Stack Ride-Sharing Application
 
 A complete ride-sharing application (like Uber) built with Node.js, Express, MongoDB, and React.
 
-## 📋 Project Overview
+## Project Overview
 
-UBER GO is a full-stack web application that connects riders (users) with drivers (captains) for ride booking and management. The application features real-time location search, dynamic fare calculation, and seamless authentication.
+Real-Time Ride-Booking Management System  is a full-stack web application that connects riders (users) with drivers (captains) for ride booking and management. The application features real-time location search, dynamic fare calculation, and seamless authentication.
 
-## 🏗️ Architecture
+## Architecture
 
 ```
-UBER_GO/
+RIDE_GO/
 ├── Backend/          # Node.js/Express API server
 │   ├── controllers/  # Route handlers
 │   ├── models/       # MongoDB schemas
@@ -32,7 +32,7 @@ UBER_GO/
 └── README.md (this file)
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js v20.19.0+
@@ -55,37 +55,37 @@ npm install
 npm run dev  # Runs on http://localhost:5173
 ```
 
-## 📚 Documentation
+## Documentation
 
 - **[Backend Documentation](Backend/README.md)** - API endpoints, setup, deployment
 - **[Frontend Documentation](Frontend/README.md)** - Components, routing, state management
 
-## ✨ Features
+## Features
 
 ### User Features
-- ✅ Sign up / Login
-- ✅ Search pickup & destination locations
-- ✅ View real-time fare estimates
-- ✅ Book rides
-- ✅ Track active rides
-- ✅ Logout
+- Sign up / Login
+- Search pickup & destination locations
+- View real-time fare estimates
+- Book rides
+- Track active rides
+- Logout
 
 ### Captain Features
-- ✅ Sign up / Login with vehicle details
-- ✅ Accept ride requests
-- ✅ Navigate to pickup/destination
-- ✅ Complete rides
-- ✅ View ride history
+- Sign up / Login with vehicle details
+- Accept ride requests
+- Navigate to pickup/destination
+- Complete rides
+- View ride history
 
 ### System Features
-- ✅ JWT authentication & authorization
-- ✅ Google Maps integration (distance/duration)
-- ✅ Real-time location suggestions
-- ✅ Dynamic fare calculation
-- ✅ CORS enabled for frontend
-- ✅ Token blacklisting for logout
+- JWT authentication & authorization
+- Google Maps integration (distance/duration)
+- Real-time location suggestions
+- Dynamic fare calculation
+- CORS enabled for frontend
+- Token blacklisting for logout
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Backend
 - **Runtime**: Node.js
@@ -103,7 +103,7 @@ npm run dev  # Runs on http://localhost:5173
 - **Animations**: GSAP
 - **Build**: Vite
 
-## 📡 API Endpoints Summary
+## API Endpoints Summary
 
 ### Users
 - `POST /users/register` - Register user
@@ -127,7 +127,7 @@ npm run dev  # Runs on http://localhost:5173
 
 See [Backend README](Backend/README.md#api-endpoints) for detailed API documentation.
 
-## 🔐 Authentication
+## Authentication
 
 Both user types (rider & captain) authenticate via JWT:
 1. Login endpoint returns `token`
@@ -136,7 +136,7 @@ Both user types (rider & captain) authenticate via JWT:
 4. Backend validates token and attaches user to `req.user`
 5. On logout, token is blacklisted
 
-## 🗄️ Database Schema
+## Database Schema
 
 **Users**: fullname, email, password (hashed), socketId  
 **Captains**: fullname, email, password (hashed), vehicle details  
@@ -145,7 +145,7 @@ Both user types (rider & captain) authenticate via JWT:
 
 See [Backend README](Backend/README.md#database-models) for full schema details.
 
-## 📁 File Organization
+## File Organization
 
 ```
 Backend/
@@ -170,12 +170,12 @@ Frontend/
   └── eslint.config.js
 ```
 
-## 🔧 Environment Configuration
+## Environment Configuration
 
 ### Backend (.env)
 ```env
 PORT=4000
-DB_CONNECT=mongodb://localhost/uber-go
+DB_CONNECT=mongodb://localhost/ride-go
 JWT_SECRET=your-secret-key
 GOOGLE_MAPS_API=your-api-key
 ```
@@ -185,7 +185,7 @@ GOOGLE_MAPS_API=your-api-key
 VITE_BASE_URL=http://localhost:4000
 ```
 
-## 🧪 Testing the Application
+## Testing the Application
 
 ### 1. Start Backend
 ```bash
@@ -205,7 +205,7 @@ Visit http://localhost:5173
 - Open another browser tab
 - Sign up as captain → Accept ride → Complete ride
 
-## 🚨 Common Issues & Solutions
+## Common Issues & Solutions
 
 | Issue | Solution |
 |-------|----------|
@@ -217,7 +217,7 @@ Visit http://localhost:5173
 
 See [Backend](Backend/README.md#common-issues--solutions) and [Frontend](Frontend/README.md) READMEs for more details.
 
-## 📈 Deployment
+## Deployment
 
 ### Backend (Heroku / Railway)
 ```bash
@@ -232,7 +232,7 @@ npm run build
 # Upload dist/ folder or connect git repo
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork repository
 2. Create feature branch: `git checkout -b feature/your-feature`
@@ -240,24 +240,24 @@ npm run build
 4. Push: `git push origin feature/your-feature`
 5. Open pull request
 
-## 📄 License
+## License
 
 ISC
 
-## 💬 Support
+## Support
 
 For issues, questions, or suggestions:
 - Open an issue in this repository
 - Check existing documentation first
 - Provide error logs and reproduction steps
 
-## 📞 Project Status
+## Project Status
 
-✅ Core features complete  
-✅ Backend API stable  
-✅ Frontend functional  
-✅ Documentation complete  
+Core features complete  
+Backend API stable  
+Frontend functional  
+Documentation complete  
 
 ---
 
-**Made with ❤️ for ride-sharing**
+**Made with  for ride-sharing**
