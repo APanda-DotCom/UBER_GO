@@ -1,366 +1,703 @@
-# Backend API Documentation
+# Real-Time Ride-Booking Management System - Backend API Documentation
 
-### Description
+A Node.js/Express backend server for the Real-Time Ride-Booking Management System ride-sharing application with user authentication, captain management, ride booking, and real-time maps integration.
 
-Documentation for the captain endpoints: register, login, profile and logout. Each endpoint includes a sample request body and sample response in JSON. Inline comments (JSON-style comments) document field requirements and constraints.
+## Table of Contents
 
-1) POST /captain/register
-Registers a new user by creating a user account with the provided information 
-Request body (JSON with comments describing constraints):
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Setup & Installation](#setup--installation)
+- [Environment Variables](#environment-variables)
+- [Running the Server](#running-the-server)
+- [Project Structure](#project-structure)
+- [API Endpoints](#api-endpoints)
+  - [User Endpoints](#user-endpoints)
+  - [Captain Endpoints](#captain-endpoints)
+  - [Ride Endpoints](#ride-endpoints)
+  - [Maps Endpoints](#maps-endpoints)
+- [Authentication](#authentication)
+- [Database Models](#database-models)
+- [Error Handling](#error-handling)
 
-```jsonc
+## Features
+
+User registration and login with JWT authentication  
+Captain registration and profile management  
+Ride creation and fare calculation  
+Real-time distance and duration calculation using Google Maps API  
+Token blacklisting for secure logout  
+Input validation and error handling  
+CORS support for frontend integration  
+
+## Tech Stack
+
+- **Runtime**: Node.js (v20.19.0+)
+- **Framework**: Express.js v5.2.1
+- **Database**: MongoDB
+- **Authentication**: JWT (JSON Web Tokens)
+- **Password Hashing**: bcrypt
+- **Input Validation**: express-validator
+- **Environment Management**: dotenv
+- **HTTP Client**: axios
+
+## Prerequisites
+
+Before running this project, ensure you have:
+
+- Node.js v20.19.0 or higher
+- MongoDB running locally or connection string for MongoDB Atlas
+- Google Maps API key (for distance/duration calculations)
+- npm or yarn package manager
+
+## Setup & Installation
+
+### 1. Clone/Navigate to Backend
+```bash
+cd Backend
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Create `.env` file
+Create a `.env` file in the Backend directory with the following variables:
+```env
+PORT=4000
+DB_CONNECT=mongodb://localhost/uber-go
+JWT_SECRET=your-secret-key-here
+GOOGLE_MAPS_API=your-google-maps-api-key
+```
+
+### 4. Verify MongoDB connection
+Ensure MongoDB is running on your local machine or update `DB_CONNECT` with your MongoDB Atlas connection string.
+
+## Environment Variables
+
+| Variable | Description | Required | Example |
+|----------|-------------|----------|---------|
+| `PORT` | Server port | No | `4000` |
+| `DB_CONNECT` | MongoDB connection string | Yes | `mongodb://0.0.0.0/uber-go` |
+| `JWT_SECRET` | Secret key for JWT tokens | Yes | `uber-go-secret` |
+| `GOOGLE_MAPS_API` | Google Maps API key | Yes | `AIzaSyCOme...` |
+
+## Running the Server
+
+### Development mode (with auto-reload)
+```bash
+npm install -g nodemon
+npx nodemon server.js
+```
+
+### Production mode
+```bash
+node server.js
+```
+
+The server will start on `http://localhost:4000` (or your configured PORT).
+
+## Project Structure
+
+```
+Backend/
+├── controllers/          # Route handlers
+│   ├── user.controller.js
+│   ├── captain.controller.js
+│   ├── ride.controller.js
+│   └── maps.controller.js
+├── models/              # MongoDB schemas
+│   ├── user.model.js
+│   ├── captain.model.js
+│   ├── ride.model.js
+│   └── BlacklistToken.model.js
+├── routes/              # Express routes
+│   ├── user.routes.js
+│   ├── captain.routes.js
+│   ├── ride.routes.js
+│   └── maps.routes.js
+├── services/            # Business logic
+│   ├── user.service.js
+│   ├── captain.service.js
+│   ├── ride.service.js
+│   └── maps.service.js
+├── middlewares/         # Custom middleware
+│   └── auth.middleware.js
+├── db/                  # Database configuration
+│   └── db.js
+├── app.js               # Express app setup
+├── server.js            # Server entry point
+├── package.json         # Dependencies
+└── .env                 # Environment variables (not in git)
+```
+
+## API Endpoints
+
+### User Endpoints
+
+#### 1. Register User
+**POST** `/users/register`
+
+**Auth**: None
+
+**Request Body**:
+```json
 {
   "fullname": {
-    "firstname": "John", // required, min length 3
-    "lastname": "Doe"    // optional but recommended, min length 3
+    "firstname": "John",
+    "lastname": "Doe"
   },
-  "email": "john.doe@example.com", // required, must be a valid email
-  "password": "supersecret", // required, min length 6
-  "vehicle": {
-    "color": "white",        // required, min length 3
-    "plate": "ABC1234",      // required, min length 6
-    "capacity": 4,            // required, integer >= 1
-    "vehicleType": "car"    // required, one of ['car', 'motorcycle', 'auto']
-  }
-}
-```
-  `post`
-Success response (201):
-### Request Body
-```jsonc
-{
-  "token": "<jwt-token>",
-  "captain": {
-    "_id": "<id>",
-    "fullname": { "firstname": "John", "lastname": "Doe" },
-    "email": "john.doe@example.com",
-    "vehicle": { "color": "white", "plate": "ABC1234", "capacity": 4, "vehicleType": "car" }
-  }
-}
-```
-Validation rules enforced by the server:
-Errors
-- `fullname`(object):
-- 400 — validation errors: response contains an `errors` array from `express-validator` describing which fields failed and why.
-- 400 — captain already exists (email registered).
-- `lastname`: required, minimum length 3
-Notes
-- `password`: required, minimum length 6
-Ensure `process.env.JWT_SECRET` is set so tokens can be issued.
-Validation is performed in `routes/captain.routes.js`.
-
-2) POST /captain/login
-- Ensure `process.env.JWT_SECRET` is set in your environment when running the server so tokens can be issued.
-Request body:
-## `/user/login` Endpoint
-```jsonc
-{
-  "email": "john.doe@example.com", // required, valid email
-  "password": "supersecret"        // required, min length 6
-}
-```
-- `email`: required, must be a valid email
-Success response (200):
-
-```jsonc
-{
-  "token": "<jwt-token>",
-  "captain": {
-    "_id": "<id>",
-    "fullname": { "firstname": "John", "lastname": "Doe" },
-    "email": "john.doe@example.com",
-    "vehicle": { "color": "white", "plate": "ABC1234", "capacity": 4, "vehicleType": "car" }
-  }
+  "email": "john@example.com",
+  "password": "password123"
 }
 ```
 
-Errors
+**Validation**:
+- `fullname.firstname`: required, min length 3
+- `fullname.lastname`: required (not enforced in validation)
+- `email`: required, valid email format
+- `password`: required, min length 6
 
-- 400 — validation errors
-- 401 — invalid credentials (email not found or password mismatch)
-
-3) GET /captain/profile
-
-Auth
-## `/user/profile` Endpoint
-- Requires authentication. Token may be provided in cookie `token` or `Authorization: Bearer <token>` header.
-
-Success response (200):
-
-```jsonc
-{
-  "captain": {
-    "_id": "<id>",
-    "fullname": { "firstname": "John", "lastname": "Doe" },
-    "email": "john.doe@example.com",
-    "vehicle": { "color": "white", "plate": "ABC1234", "capacity": 4, "vehicleType": "car" }
-  }
-}
-```
-
-Errors
-
-- 401 — missing/invalid/expired token
-### Description
-4) GET /captain/logout
-
-Auth
-Returns the authenticated user's profile information. The route is protected by authentication middleware and requires a valid JWT (sent either in the `Authorization` header as `Bearer <token>` or in the `token` cookie).
-- Protected — token required (cookie or Authorization header).
-
-Success response (200):
-
-```jsonc
-{
-  "message": "Logout successfully"
-}
-```
-
-Errors
-
-- 400 — token not found
-- 500 — server error (while saving blacklisted token)
-### HTTP Method
-Files
-
-- Route definition: `Backend/routes/captain.routes.js`
-- Controller: `Backend/controllers/captain.controller.js`
-- Service: `Backend/services/captain.service.js`
-
-Examples (curl)
-
-Register:
-
-```bash
-curl -X POST http://localhost:3000/captain/register \
-  -H "Content-Type: application/json" \
-  -d '{ "fullname":{"firstname":"John","lastname":"Doe"}, "email":"john@example.com", "password":"secret123", "vehicle":{"color":"blue","plate":"XYZ7890","capacity":4,"vehicleType":"car"} }'
-```
-
-Login:
-
-```bash
-curl -X POST http://localhost:3000/captain/login \
-  -H "Content-Type: application/json" \
-  -d '{ "email":"john@example.com", "password":"secret123" }'
-```
-
-Notes
-
-- The request JSON samples above use JSONC (JSON with comments) for documentation clarity; remove comments when sending real requests.
-  `GET`
-
-### Authorization
-
-- Requires authentication. The middleware used is `authMiddleware.authUser` in `routes/user.routes.js`.
-
-### Success Response (200)
-
-Returns the user object for the authenticated user (id, fullname, email, etc.). Example:
-
-- `200` — { user }
-
-### Error Responses
-
-- `401` — Unauthorized (missing/invalid/expired token).
-
-### Notes
-
-- The handler is implemented in `controllers/user.controller.js` as `getUserProfile` and simply returns `req.user` (populated by the auth middleware).
-
-## `/user/logout` Endpoint
-
-### Description
-
-Logs out the authenticated user by blacklisting the current token and clearing the `token` cookie.
-
-### HTTP Method
-
-  `GET`
-
-### Authorization
-
-- Requires authentication. The route uses `authMiddleware.authUser` to ensure a valid token.
-
-### Success Response (200)
-
-- `200` — { message: "Logged out successfully" }
-
-### Error Responses
-
-- `400` — Token not found (no token provided in cookie or Authorization header).
-- `500` — Server error (on unexpected failures while blacklisting the token).
-
-### Notes
-
-- The route is implemented in `controllers/user.controller.js` as `LogoutUser`. It finds the token from the `token` cookie or the `Authorization` header, saves it to the `BlacklistToken` collection via `models/BlacklistToken.model.js`, and clears the cookie with `res.clearCookie("token")`.
-
-## `/captain/register` Endpoint
-
-### Description
-
-Registers a new captain by creating a captain account with the provided information including vehicle details.
-
-### HTTP Method
-
-  `POST`
-
-### Request Body
-
-Validation rules enforced by the server:
-
-- `fullname` (object):
-  - `firstname`: required, minimum length 3
-  - `lastname`: minimum length 3
-- `email`: required, must be a valid email
-- `password`: required, minimum length 6
-- `vehicle` (object):
-  - `color`: required, minimum length 3
-  - `plate`: required, minimum length 6
-  - `capacity`: required, minimum 1
-  - `vehicleType`: required, must be one of ['car', 'motorcycle', 'auto']
-
-### Success Response (201)
-
-Returns a JSON object containing the JWT token and the captain record (excluding the hashed password):
-
-- `token`: JWT string
-- `captain`: captain object (id, fullname, email, vehicle, ...)
-
-### Error Responses
-
-- `400` — Validation errors (missing/invalid fields). Response contains `errors` array from express-validator.
-- `400` — Captain already exists (email already registered).
-
-### Notes
-
-- The endpoint expects `fullname` to be an object with `firstname` and `lastname` fields, and `vehicle` to be an object with the specified fields.
-- On success the response includes a JWT token generated by the captain model (`generateAuthToken`).
-- Ensure `process.env.JWT_SECRET` is set in your environment when running the server so tokens can be issued.
-- The route is defined as `POST /captain/register` in `routes/captain.routes.js`.
-
-### Example Request Body
-
+**Success Response** (201):
 ```json
 {
+  "message": "User registered successfully",
+  "token": "<jwt-token>",
+  "user": {
+    "id": "<user-id>",
+    "fullname": { "firstname": "John", "lastname": "Doe" },
+    "email": "john@example.com"
+  }
+}
+```
+
+**Error Responses**:
+- 400 — Validation errors
+- 409 — Email already registered
+
+---
+
+#### 2. Login User
+**POST** `/users/login`
+
+**Auth**: None
+
+**Request Body**:
+```json
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+**Validation**:
+- `email`: required, valid email format
+- `password`: required, min length 6
+
+**Success Response** (200):
+```json
+{
+  "token": "<jwt-token>",
+  "user": {
+    "id": "<user-id>",
+    "fullname": { "firstname": "John", "lastname": "Doe" },
+    "email": "john@example.com"
+  }
+}
+```
+
+**Error Responses**:
+- 400 — Validation errors
+- 401 — Invalid email or password
+
+---
+
+#### 3. Get User Profile
+**GET** `/users/profile`
+
+**Auth**: Required (Bearer token or cookie)
+
+**Success Response** (200):
+```json
+{
+  "id": "<user-id>",
   "fullname": { "firstname": "John", "lastname": "Doe" },
-  "email": "john.doe@example.com",
-  "password": "supersecret",
+  "email": "john@example.com"
+}
+```
+
+**Error Responses**:
+- 401 — Unauthorized (invalid/missing token)
+
+---
+
+#### 4. Logout User
+**GET** `/users/logout`
+
+**Auth**: Required (Bearer token or cookie)
+
+**Success Response** (200):
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+**Error Responses**:
+- 400 — Token not found
+- 500 — Server error
+
+---
+
+### Captain Endpoints
+
+#### 1. Register Captain
+**POST** `/captains/register`
+
+**Auth**: None
+
+**Request Body**:
+```json
+{
+  "fullname": {
+    "firstname": "Jane",
+    "lastname": "Smith"
+  },
+  "email": "jane@example.com",
+  "password": "password123",
   "vehicle": {
-    "color": "white",
-    "plate": "ABC1234",
+    "color": "black",
+    "plate": "ABC123",
     "capacity": 4,
     "vehicleType": "car"
   }
 }
 ```
 
-### Example Success Response
+**Validation**:
+- `fullname.firstname`: required, min length 3
+- `email`: required, valid email format
+- `password`: required, min length 6
+- `vehicle.color`: required, min length 3
+- `vehicle.plate`: required, min length 6
+- `vehicle.capacity`: required, integer >= 1
+- `vehicleType`: required, one of ['auto', 'car', 'motorcycle']
 
+**Success Response** (201):
+```json
+{
+  "message": "Captain registered successfully",
+  "token": "<jwt-token>",
+  "captain": {
+    "id": "<captain-id>",
+    "fullname": { "firstname": "Jane", "lastname": "Smith" },
+    "email": "jane@example.com",
+    "vehicle": { "color": "black", "plate": "ABC123", "capacity": 4, "vehicleType": "car" }
+  }
+}
+```
+
+**Error Responses**:
+- 400 — Validation errors
+- 409 — Email already registered
+
+---
+
+#### 2. Login Captain
+**POST** `/captains/login`
+
+**Auth**: None
+
+**Request Body**:
+```json
+{
+  "email": "jane@example.com",
+  "password": "password123"
+}
+```
+
+**Success Response** (200):
 ```json
 {
   "token": "<jwt-token>",
   "captain": {
-    "_id": "<id>",
-    "fullname": { "firstname": "John", "lastname": "Doe" },
-    "email": "john.doe@example.com",
-    "vehicle": { "color": "white", "plate": "ABC1234", "capacity": 4, "vehicleType": "car" }
+    "id": "<captain-id>",
+    "fullname": { "firstname": "Jane", "lastname": "Smith" },
+    "email": "jane@example.com",
+    "vehicle": { "color": "black", "plate": "ABC123", "capacity": 4, "vehicleType": "car" }
   }
 }
 ```
-### Captain Routes
-Files
-- Route definition: [Backend/routes/captain.routes.js](Backend/routes/captain.routes.js)  
-- Controller: [Backend/controllers/captain.controller.js](Backend/controllers/captain.controller.js)  
-- Service: [Backend/services/captain.service.js](Backend/services/captain.service.js)
 
-Overview
-These endpoints manage captain registration, login, profile retrieval and logout. Validation is performed via express-validator in the route definitions. Authentication middleware protects profile and logout routes.
+**Error Responses**:
+- 401 — Invalid credentials
 
-Common headers / auth
-- Authorization header: `Authorization: Bearer <token>` (or token cookie, depending on middleware)
-- Protected routes require captain auth middleware (see route file for actual middleware names).
+---
 
-Endpoints
+#### 3. Get Captain Profile
+**GET** `/captains/profile`
 
-1) POST /captain/register
-- Description: Register a new captain with fullname, email, password and vehicle details.
-- Validation (from route):
-  - `email` — must be a valid email
-  - `fullname.firstname` — min length 3
-  - `password` — min length 6
-  - `vehicle.color` — min length 3
-  - `vehicle.plate` — min length 6
-  - `vehicle.capacity` — integer, min 1
-  - `vehicle.vehicleType` — one of `car`, `motorcycle`, `auto`
-- Request body (example):
+**Auth**: Required (Bearer token or cookie)
+
+**Success Response** (200):
 ```json
 {
-  "fullname": { "firstname": "John", "lastname": "Doe" },
-  "email": "john.doe@example.com",
-  "password": "supersecret",
-  "vehicle": {
-    "color": "white",
-    "plate": "ABC1234",
-    "capacity": 4,
-    "vehicleType": "car"
+  "id": "<captain-id>",
+  "fullname": { "firstname": "Jane", "lastname": "Smith" },
+  "email": "jane@example.com",
+  "vehicle": { "color": "black", "plate": "ABC123", "capacity": 4, "vehicleType": "car" }
+}
+```
+
+---
+
+#### 4. Logout Captain
+**GET** `/captains/logout`
+
+**Auth**: Required (Bearer token or cookie)
+
+**Success Response** (200):
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+---
+
+### Ride Endpoints
+
+#### 1. Create Ride
+**POST** `/rides/create`
+
+**Auth**: Required (Bearer token or cookie)
+
+**Request Body**:
+```json
+{
+  "pickup": "562/11-A, Sector 5",
+  "destination": "MG Road, Downtown",
+  "vehicleType": "car"
+}
+```
+
+**Validation**:
+- `pickup`: required, string, min length 3
+- `destination`: required, string, min length 3
+- `vehicleType`: required, one of ['auto', 'car', 'motorcycle']
+
+**Success Response** (201):
+```json
+{
+  "ride": {
+    "id": "<ride-id>",
+    "user": "<user-id>",
+    "pickup": "562/11-A, Sector 5",
+    "destination": "MG Road, Downtown",
+    "fare": { "auto": 95.50, "car": 142.75, "motorcycle": 68.25 },
+    "status": "pending"
   }
 }
 ```
-- Success (201): JSON with `token` and `captain` (captain object without hashed password).
-- Errors:
-  - 400 — validation errors (array from express-validator)
-  - 400 — email already registered (controller/service logic)
 
-2) POST /captain/login
-- Description: Authenticate a captain using email and password; returns a JWT on success.
-- Validation (from route):
-  - `email` — must be a valid email
-  - `password` — min length 6
-- Request body (example):
+**Error Responses**:
+- 400 — Validation errors
+- 401 — Unauthorized
+
+---
+
+#### 2. Get Fare
+**GET** `/rides/get-fare`
+
+**Auth**: Required (Bearer token or cookie)
+
+**Query Parameters** (required):
+- `pickup`: string, min length 3 - Pickup location address
+- `destination`: string, min length 3 - Destination location address
+
+**Example Request**:
+```bash
+curl -X GET "http://localhost:4000/rides/get-fare?pickup=562/11-A&destination=MG%20Road" \
+  -H "Authorization: Bearer <token>"
+```
+
+**Success Response** (200):
 ```json
-{ "email": "john.doe@example.com", "password": "supersecret" }
+{
+  "auto": 95.50,
+  "car": 142.75,
+  "motorcycle": 68.25
+}
 ```
-- Success (200): JSON with `token` and `captain` (captain object).
-- Errors:
-  - 400 — validation errors
-  - 401 — invalid credentials
 
-3) GET /captain/profile
-- Description: Returns authenticated captain profile.
-- Auth: Protected by authentication middleware (see route for middleware names).
-- Success (200): `{ captain: <captain object> }`
-- Errors:
-  - 401 — missing/invalid/expired token
+**Fare Calculation Details**:
+- Uses Google Maps API to get distance and duration
+- Base fare per vehicle type + per-km rate + per-minute rate
+- `auto`: Affordable option
+- `car`: Standard ride
+- `motorcycle`: Economy option
 
-4) GET /captain/logout
-- Description: Logs out the captain by blacklisting the token and clearing cookie (implementation in controller).
-- Auth: Protected
-- Success (200): `{ message: "Logged out successfully" }`
-- Errors:
-  - 400 — token not provided
-  - 500 — server errors while blacklisting token
+**Error Responses**:
+- 400 — Validation errors (missing/invalid query params)
+- 401 — Unauthorized
+- 500 — Server error (Google Maps API failure)
 
-Notes & Implementation pointers
-- The route file contains the validation logic; consult [Backend/routes/captain.routes.js](Backend/routes/captain.routes.js) for exact rules.
-- Token generation is handled in the model (e.g., a `generateAuthToken` method on the captain model); ensure `process.env.JWT_SECRET` is set.
-- Controller functions referenced in routes (e.g., register, login, logout, getProfile) are implemented in [Backend/controllers/captain.controller.js](Backend/controllers/captain.controller.js).
-- The service layer (e.g., `createCaptain` in [Backend/services/captain.service.js](Backend/services/captain.service.js)) required fields and performs DB create operations
+---
 
-Examples
-- Register (curl):
+### Maps Endpoints
+
+#### 1. Get Location Suggestions
+**GET** `/maps/get-suggestions`
+
+**Auth**: Required (Bearer token or cookie)
+
+**Query Parameters**:
+- `input` (required): Search string for location
+
+**Example Request**:
 ```bash
-curl -X POST /captain/register \
-  -H "Content-Type: application/json" \
-  -d '{ "fullname":{"firstname":"John","lastname":"Doe"}, "email":"john@example.com", "password":"secret123", "vehicle":{"color":"blue","plate":"XYZ7890","capacity":4,"vehicleType":"car"} }'
+GET /maps/get-suggestions?input=MG%20Road
+Authorization: Bearer <token>
 ```
 
-- Login (curl):
+**Success Response** (200):
+```json
+[
+  "MG Road, Downtown",
+  "MG Road, North",
+  "MG Road Extension"
+]
+```
+
+---
+
+#### 2. Get Distance and Time
+**GET** `/maps/get-distance-time`
+
+**Auth**: Required (Bearer token or cookie)
+
+**Query Parameters**:
+- `origin` (required): Starting location
+- `destination` (required): Ending location
+
+**Example Request**:
 ```bash
-curl -X POST /captain/login \
-  -H "Content-Type: application/json" \
-  -d '{ "email":"john@example.com", "password":"secret123" }'
+GET /maps/get-distance-time?origin=562/11-A&destination=MG%20Road
+Authorization: Bearer <token>
 ```
 
-Changelog
-- Created `Backend/docs/captain.routes.md` documenting the captain routes, payloads, validations, auth requirements and examples.
+**Success Response** (200):
+```json
+{
+  "distance": "4.5 km",
+  "duration": "12 mins"
+}
+```
+
+---
+
+## Authentication
+
+### JWT Token Mechanism
+- Tokens are issued on successful login
+- Tokens are signed with `JWT_SECRET` environment variable
+- Token expiration: 24 hours
+- Used for all protected endpoints
+
+### Token Usage
+Tokens can be sent in two ways:
+
+**1. Authorization Header** (Recommended):
+```bash
+Authorization: Bearer <token>
+```
+
+**2. Cookie**:
+```bash
+Cookie: token=<token>
+```
+
+### Auth Middleware
+All protected routes use `authMiddleware.authUser` which:
+1. Extracts token from Authorization header or cookies
+2. Verifies the token signature
+3. Attaches user data to `req.user`
+4. Returns 401 for invalid/expired tokens
+
+---
+
+## Database Models
+
+### User Model
+**File**: `models/user.model.js`
+
+**Fields**:
+- `fullname.firstname`: String, required, min 3 chars
+- `fullname.lastname`: String, required, min 3 chars
+- `email`: String, required, unique, min 5 chars
+- `password`: String, required (hashed with bcrypt)
+- `socketId`: String, optional (for real-time features)
+
+**Methods**:
+- `generateAuthToken()`: Creates JWT token
+- `comparePassword(password)`: Compares input with hashed password
+
+---
+
+### Captain Model
+**File**: `models/captain.model.js`
+
+**Fields**:
+- `fullname.firstname`: String, required, min 3 chars
+- `fullname.lastname`: String, required, min 3 chars
+- `email`: String, required, unique
+- `password`: String, required (hashed with bcrypt)
+- `vehicle.color`: String, required, min 3 chars
+- `vehicle.plate`: String, required, min 3 chars
+- `vehicle.capacity`: Number, required, min 1
+- `vehicle.vehicleType`: String, enum: ['auto', 'car', 'motorcycle']
+- `socketId`: String, optional
+
+**Methods**:
+- `generateAuthToken()`: Creates JWT token
+- `comparePassword(password)`: Compares input with hashed password
+
+---
+
+### Ride Model
+**File**: `models/ride.model.js`
+
+**Fields**:
+- `user`: ObjectId (Reference to User), required
+- `captain`: ObjectId (Reference to Captain), optional
+- `pickup`: String, required
+- `destination`: String, required
+- `fare.auto`: Number
+- `fare.car`: Number
+- `fare.motorcycle`: Number
+- `status`: String, enum: ['pending', 'accepted', 'completed', 'cancelled']
+- `otp`: String, optional
+- `createdAt`: Date, auto-generated
+
+---
+
+### BlacklistToken Model
+**File**: `models/BlacklistToken.model.js`
+
+**Fields**:
+- `token`: String, required, indexed
+- `createdAt`: Date, auto-generated with 24h TTL
+
+**Purpose**: Stores tokens of logged-out users to prevent re-use
+
+---
+
+## Error Handling
+
+### Validation Errors (400)
+```json
+{
+  "errors": [
+    {
+      "type": "field",
+      "value": "",
+      "msg": "Invalid email",
+      "path": "email",
+      "location": "body"
+    }
+  ]
+}
+```
+
+### Authentication Errors (401)
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+### Duplicate Entry (409)
+```json
+{
+  "message": "Email already registered"
+}
+```
+
+### Server Errors (500)
+```json
+{
+  "message": "Internal server error"
+}
+```
+
+---
+
+## Middleware
+
+### authMiddleware
+**File**: `middlewares/auth.middleware.js`
+
+**authUser**: Verifies JWT token and attaches user to request
+
+**Usage**:
+```javascript
+const { authUser } = require('../middlewares/auth.middleware');
+router.get('/profile', authUser, controller.getUserProfile);
+```
+
+---
+
+## Common Issues & Solutions
+
+### Port 4000 already in use
+```bash
+# Find process using port 4000 (Windows)
+netstat -ano | findstr :4000
+
+# Kill process
+taskkill /PID <PID> /F
+```
+
+### MongoDB connection failed
+- Ensure MongoDB is running: `mongod`
+- Check connection string in `.env`
+- For MongoDB Atlas: `mongodb+srv://username:password@cluster.mongodb.net/uber-go`
+
+### Invalid Google Maps API key
+- Generate new API key from [Google Cloud Console](https://console.cloud.google.com/)
+- Enable Maps, Routes, and Places APIs
+- Update `GOOGLE_MAPS_API` in `.env`
+
+### JWT Token errors
+- Ensure `JWT_SECRET` is set in `.env`
+- Check token hasn't expired (24h validity)
+- Verify token format in Authorization header
+
+---
+
+## Dependencies
+
+```json
+{
+  "axios": "^1.13.2",
+  "bcrypt": "^6.0.0",
+  "cookie-parser": "^1.4.7",
+  "cors": "^2.8.5",
+  "dotenv": "^17.2.3",
+  "express": "^5.2.1",
+  "express-validator": "^7.3.1",
+  "jsonwebtoken": "^9.0.3",
+  "mongoose": "^9.0.1"
+}
+```
+
+---
+
+## License
+
+ISC
+
+## Support
+
+For issues and questions, please open an issue in the repository.
